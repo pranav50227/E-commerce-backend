@@ -1,0 +1,104 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: ecommerce-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=ecommerce
+    volumes:
+      - ../postgres:/docker-entrypoint-initdb.d
+
+  redis:
+    image: redis:7-alpine
+    container_name: ecommerce-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - ../redis/redis.conf:/usr/local/etc/redis/redis.conf
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+
+  api-gateway:
+    build:
+      context: ../../
+      dockerfile: infrastructure/docker/Dockerfile.gateway
+    ports:
+      - "8000:8000"
+    environment:
+      - AUTH_SERVICE_URL=http://auth-service:8085
+      - USER_SERVICE_URL=http://user-service:8080
+      - PRODUCT_SERVICE_URL=http://product-catalog-service:8081
+      - INVENTORY_SERVICE_URL=http://inventory-service:8082
+      - ORDER_SERVICE_URL=http://order-service:8083
+      - CART_SERVICE_URL=http://shopping-cart-service:8084
+    depends_on:
+      - auth-service
+      - user-service
+      - product-catalog-service
+      - inventory-service
+      - order-service
+      - shopping-cart-service
+
+  auth-service:
+    build:
+      context: ../../
+      dockerfile: service/auth-service/Dockerfile
+    ports:
+      - "8085:8085"
+    environment:
+      - USER_SERVICE_URL=http://user-service:8080
+    depends_on:
+      - user-service
+
+  user-service:
+    build:
+      context: ../../
+      dockerfile: service/UserManagementService/Dockerfile
+    ports:
+      - "8080:8080"
+
+  product-catalog-service:
+    build:
+      context: ../../
+      dockerfile: service/ProductCatalogService/Dockerfile
+    ports:
+      - "8081:8081"
+
+  inventory-service:
+    build:
+      context: ../../
+      dockerfile: infrastructure/docker/Dockerfile.inventory
+    ports:
+      - "8082:8082"
+
+  order-service:
+    build:
+      context: ../../
+      dockerfile: infrastructure/docker/Dockerfile.order
+    ports:
+      - "8083:8083"
+    environment:
+      - PRODUCT_SERVICE_URL=http://product-catalog-service:8081
+      - INVENTORY_SERVICE_URL=http://inventory-service:8082
+    depends_on:
+      - product-catalog-service
+      - inventory-service
+
+  shopping-cart-service:
+    build:
+      context: ../../
+      dockerfile: service/ShoppingCartService/Dockerfile
+    ports:
+      - "8084:8084"
+    environment:
+      - PRODUCT_SERVICE_URL=http://product-catalog-service:8081
+      - INVENTORY_SERVICE_URL=http://inventory-service:8082
+      - ORDER_SERVICE_URL=http://order-service:8083
+    depends_on:
+      - product-catalog-service
+      - inventory-service
+      - order-service
