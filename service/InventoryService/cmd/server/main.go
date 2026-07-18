@@ -9,6 +9,8 @@ import (
 	"inventory-service/internal/repository"
 	"inventory-service/internal/service"
 	"github.com/gin-gonic/gin"
+
+	"shared/utils"
 )
 
 func main() {
@@ -27,8 +29,9 @@ func main() {
 	// Setup routes
 	api.SetupRoutes(r, h)
 
-	log.Println("Inventory Service starting on port 8082...")
-	if err := r.Run(":8082"); err != nil {
+	port := utils.GetEnv("PORT_INVENTORY", "8082")
+	log.Printf("Inventory Service starting on port %s...\n", port)
+	if err := r.Run(":" + port); err != nil {
 		log.Fatalf("Failed to start Inventory Service: %v", err)
 	}
 }

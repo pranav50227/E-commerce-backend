@@ -29,8 +29,9 @@ func main() {
 	// Setup routes
 	api.SetupRoutes(r, h)
 
-	log.Println("Auth Service starting on port 8085...")
-	if err := r.Run(":8085"); err != nil {
+	port := utils.GetEnv("PORT_AUTH", "8085")
+	log.Printf("Auth Service starting on port %s...\n", port)
+	if err := r.Run(":" + port); err != nil {
 		log.Fatalf("Failed to start Auth Service: %v", err)
 	}
 }

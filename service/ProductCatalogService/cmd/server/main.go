@@ -9,6 +9,8 @@ import (
 	"product-catalog-service/internal/repository"
 	"product-catalog-service/internal/service"
 	"github.com/gin-gonic/gin"
+
+	"shared/utils"
 )
 
 func main() {
@@ -27,8 +29,9 @@ func main() {
 	// Setup routes
 	api.SetupRoutes(r, h)
 
-	log.Println("Product Catalog Service starting on port 8081...")
-	if err := r.Run(":8081"); err != nil {
+	port := utils.GetEnv("PORT_PRODUCT", "8081")
+	log.Printf("Product Catalog Service starting on port %s...\n", port)
+	if err := r.Run(":" + port); err != nil {
 		log.Fatalf("Failed to start Product Catalog Service: %v", err)
 	}
 }

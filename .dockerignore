@@ -1,0 +1,14 @@
+.git
+.github
+.gemini
+.agents
+docs
+infrastructure
+deployments
+scripts
+**/node_modules
+**/dist
+**/bin
+**/.next
+**/*.exe
+**/*.test

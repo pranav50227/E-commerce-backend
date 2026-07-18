@@ -3,8 +3,8 @@ version: '3.8'
 services:
   api-gateway:
     build:
-      context: ./service/api-gateway
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: service/api-gateway/Dockerfile
     ports:
       - "8000:8000"
     environment:
@@ -24,8 +24,8 @@ services:
 
   auth-service:
     build:
-      context: ./service/auth-service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: service/auth-service/Dockerfile
     ports:
       - "8085:8085"
     environment:
@@ -35,29 +35,29 @@ services:
 
   user-service:
     build:
-      context: ./service/UserManagementService
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: service/UserManagementService/Dockerfile
     ports:
       - "8080:8080"
 
   product-catalog-service:
     build:
-      context: ./service/ProductCatalogService
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: service/ProductCatalogService/Dockerfile
     ports:
       - "8081:8081"
 
   inventory-service:
     build:
-      context: ./service/InventoryService
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: service/InventoryService/Dockerfile
     ports:
       - "8082:8082"
 
   order-service:
     build:
-      context: ./service/OrderManagementService
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: service/OrderManagementService/Dockerfile
     ports:
       - "8083:8083"
     environment:
@@ -69,8 +69,8 @@ services:
 
   shopping-cart-service:
     build:
-      context: ./service/ShoppingCartService
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: service/ShoppingCartService/Dockerfile
     ports:
       - "8084:8084"
     environment:

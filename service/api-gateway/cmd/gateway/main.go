@@ -39,11 +39,16 @@ func main() {
 		c.JSON(http.StatusOK, gin.H{"status": "API Gateway is running"})
 	})
 
+	// Redirect root to swagger
+	r.GET("/", func(c *gin.Context) {
+		c.Redirect(http.StatusMovedPermanently, "/swagger/index.html")
+	})
+
 	// Swagger endpoints
-	r.GET("/swagger/doc.json", func(c *gin.Context) {
+	r.GET("/swagger-doc/doc.json", func(c *gin.Context) {
 		c.Data(http.StatusOK, "application/json; charset=utf-8", swaggerJSON)
 	})
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, ginSwagger.URL("/swagger/doc.json")))
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, ginSwagger.URL("/swagger-doc/doc.json")))
 
 	// Dynamic routing proxy middleware/handler
 	r.Any("/api/v1/*path", func(c *gin.Context) {
@@ -111,8 +116,9 @@ func main() {
 		proxy.ServeHTTP(c.Writer, c.Request)
 	})
 
-	log.Println("API Gateway starting on port 8000...")
-	if err := r.Run(":8000"); err != nil {
+	port := utils.GetEnv("PORT_GATEWAY", "8000")
+	log.Printf("API Gateway starting on port %s...\n", port)
+	if err := r.Run(":" + port); err != nil {
 		log.Fatalf("Failed to start API Gateway: %v", err)
 	}
 }
